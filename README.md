@@ -6,6 +6,8 @@ This project contains adequate tutorial code and challenges to assess student co
 
 To successfully complete this project, please access and make use of the `CHALLENGES.md` file located at the top level of this project directory.
 
+![Screenshot](screenshot.png)
+
 ## SUMMARY
 
 This project will have you construct a working neural-network-based simulation that will allow you to iteratively train a game-playing bot to train a racecar on an input track of your choice.
