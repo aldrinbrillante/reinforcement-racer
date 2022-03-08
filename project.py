@@ -15,15 +15,19 @@ MUTABILITY:     This file contains challenges that must be
 # Relative Imports and Instantiations
 import numpy as np
 import matplotlib.pyplot as plt
-import os, sys, math, random
-import neat, pygame
+import os
+import sys
+import math
+import random
+import neat
+import pygame
 
 from structures.structures import CarAgent
 
 
 # Setup Agent Variables
 AGENT_PARAMETERS = {
-    "X": 60, 
+    "X": 60,
     "Y": 60
 }
 
@@ -46,16 +50,22 @@ def racecar_simulator(genomes, configurations):
     models, agents = list(), list()
 
     # Initialize PyGame utilities for training
-    pygame.init(); screen = pygame.display.set_mode((ENVIRONMENT_PARAMETERS["WIDTH"], ENVIRONMENT_PARAMETERS["HEIGHT"]), 
-                                                     pygame.FULLSCREEN)
-    
+    pygame.init()
+    screen = pygame.display.set_mode((ENVIRONMENT_PARAMETERS["WIDTH"], ENVIRONMENT_PARAMETERS["HEIGHT"]),
+                                     pygame.FULLSCREEN)
+
     # Iteratively train agent using Deep RL
     for iteration, genome in genomes:
-        # TODO: What type of neural network is designed here? 
+        # TODO: What type of neural network is designed here?
+        '''feed-forward neural network'''
         # TODO: Can we utilize more advanced neural networks instead?
-        # TODO: What is the tradeoff of using higher-order and/or lower-order networks? 
+        '''Yes, I believe we can use a more advanced style of neural network'''
+        # TODO: What is the tradeoff of using higher-order and/or lower-order networks?
+        '''The tradeoff of using lower-order networks is that it become overffit for the problem,
+        while the tradeoff of using higher-order networks is that we are more prone to be adding
+        randomness into the scenario. '''
         model = neat.nn.FeedForwardNetwork.create(genome, configurations)
-        
+
         # Save instantiated models with (re)set genetic training counter
         models.append(model)
         genome.fitness = 0
@@ -73,7 +83,7 @@ def racecar_simulator(genomes, configurations):
     # Read in environment image map
     environment = pygame.image.load("assets/environments/map01.png").convert()
 
-    # Iterate generation counter as global variable 
+    # Iterate generation counter as global variable
     global current_generation
     current_generation += 1
 
@@ -90,7 +100,14 @@ def racecar_simulator(genomes, configurations):
             choice = output.index(max(output))
             # TODO: Explain how policy selection works here – how are choices selected
             #       across our reinforcement learning agent? What do those choices
-            #       actually do for our game-playing bot? 
+            #       actually do for our game-playing bot?
+            '''
+            The values generated from the activate function of FeedForwardNetwork is being
+            used using the actions from the input value of CarAgent.get_actions().
+            Then the index of max output is used to select listings.
+            The choices made either changes the angle or speed of the car,
+            being able to increase of decrease.
+            '''
             if choice == 0:
                 agent.angle += 10
             elif choice == 1:
@@ -102,8 +119,12 @@ def racecar_simulator(genomes, configurations):
                 agent.speed += 2
 
         # Check if RL Agent is alive and optimize rewarding schema
-        # TODO: Explain how the rewards are selected here – how is the 
+        # TODO: Explain how the rewards are selected here – how is the
         #       rewarding schema related to the model's training fitness?
+        '''
+        If the care is still alive, rewards are selected based on car's distance traveled.
+        We also look into the model's fitness function being set to max stagnation. Higher fitness is more rewards.
+        '''
         still_alive = 0
         for iteration, agent in enumerate(agents):
             if agent.is_alive():
@@ -141,7 +162,9 @@ def racecar_simulator(genomes, configurations):
         text_rectangle.center = (900, 490)
         screen.blit(text, text_rectangle)
 
-        pygame.display.flip(); clock.tick(60)
+        pygame.display.flip()
+        clock.tick(60)
+
 
 # Run code
 if __name__ == "__main__":
@@ -151,7 +174,7 @@ if __name__ == "__main__":
                                         neat.DefaultSpeciesSet,
                                         neat.DefaultStagnation,
                                         PATH_CONFIG)
-    
+
     population = neat.Population(configurations)
     population.add_reporter(neat.StdOutReporter(True))
     population_statistics = neat.StatisticsReporter()
